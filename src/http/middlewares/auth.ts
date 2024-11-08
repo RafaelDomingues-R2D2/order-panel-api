@@ -12,5 +12,17 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         return reply.status(401).send({ message: 'UNAUTHORIZED' })
       }
     }
+
+    request.getCurrentOrganizationIdOfUser = async () => {
+      try {
+        const { organizationId } = await request.jwtVerify<{
+          organizationId: string
+        }>()
+
+        return organizationId
+      } catch {
+        return reply.status(401).send({ message: 'UNAUTHORIZED' })
+      }
+    }
   })
 })

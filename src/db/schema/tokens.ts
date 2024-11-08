@@ -6,7 +6,7 @@ import { users } from './users'
 
 export const tokenType = pgEnum('token_type', ['PASSWORD_RECOVER'])
 
-export const token = pgTable('token', {
+export const tokens = pgTable('tokens', {
   id: text('id')
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -18,10 +18,10 @@ export const token = pgTable('token', {
   createdAt: timestamp('created_at').defaultNow(),
 })
 
-export const tokenRelations = relations(token, ({ one }) => ({
+export const tokensRelations = relations(tokens, ({ one }) => ({
   users: one(users, {
-    fields: [token.userId],
+    fields: [tokens.userId],
     references: [users.id],
-    relationName: 'tokenUser',
+    relationName: 'tokensUsers',
   }),
 }))

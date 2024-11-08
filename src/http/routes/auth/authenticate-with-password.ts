@@ -1,9 +1,11 @@
 import { compare } from 'bcryptjs'
+import { eq } from 'drizzle-orm'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
 
 import { db } from '@/db/connection'
+import { members } from '@/db/schema'
 
 import { BadRequestError } from '../_errors/bad-request-error'
 
@@ -33,7 +35,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
 
       if (userFromEmail.passwordHash === null) {
         throw new BadRequestError(
-          "User doesn't have a password, user socila login.",
+          "User doesn't have a password, user social login.",
         )
       }
 
@@ -46,9 +48,15 @@ export async function authenticateWithPassword(app: FastifyInstance) {
         throw new BadRequestError('Invalid credentials.')
       }
 
+      const organizationMember = await db
+        .select({ organizationId: members.organizationId })
+        .from(members)
+        .where(eq(members.userId, userFromEmail.id))
+
       const token = await reply.jwtSign(
         {
           sub: userFromEmail.id,
+          organizationId: organizationMember[0].organizationId,
         },
         {
           sign: {

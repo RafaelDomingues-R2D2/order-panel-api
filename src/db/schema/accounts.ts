@@ -6,7 +6,7 @@ import { users } from '.'
 
 export const accountProvider = pgEnum('account_provider', ['GITHUB'])
 
-export const account = pgTable('account', {
+export const accounts = pgTable('accounts', {
   id: text('id')
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -17,9 +17,9 @@ export const account = pgTable('account', {
     .notNull(),
 })
 
-export const accountRelations = relations(account, ({ one }) => ({
+export const accountRelations = relations(accounts, ({ one }) => ({
   users: one(users, {
-    fields: [account.userId],
+    fields: [accounts.userId],
     references: [users.id],
     relationName: 'accountUser',
   }),
