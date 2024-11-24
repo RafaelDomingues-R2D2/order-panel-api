@@ -1,5 +1,5 @@
 PORT=3333
 
-DB_URL="postgresql://docker:docker@localhost:5432/painel-entregas"
+DB_URL="postgresql://docker:docker@localhost:5432/order-panel"
 
 JWT_SECRET=""

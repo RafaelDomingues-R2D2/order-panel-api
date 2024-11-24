@@ -3,21 +3,21 @@ import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { db } from '@/db/connection'
-import { categories } from '@/db/schema'
+import { products } from '@/db/schema'
 import { auth } from '@/http/middlewares/auth'
 
-export async function getCategories(app: FastifyInstance) {
+export async function getProducts(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .get('/categories', async (request) => {
+    .get('/products', async (request) => {
       const organizationId = await request.getCurrentOrganizationIdOfUser()
 
       const result = await db
         .select()
-        .from(categories)
-        .where(eq(categories.organizationId, organizationId))
+        .from(products)
+        .where(eq(products.organizationId, organizationId))
 
-      return { categories: result }
+      return { products: result }
     })
 }

@@ -56,7 +56,7 @@ export async function authenticateWithPassword(app: FastifyInstance) {
       const token = await reply.jwtSign(
         {
           sub: userFromEmail.id,
-          organizationId: organizationMember[0].organizationId,
+          organizationId: organizationMember[0]?.organizationId,
         },
         {
           sign: {

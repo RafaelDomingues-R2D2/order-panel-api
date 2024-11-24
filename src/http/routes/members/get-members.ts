@@ -3,21 +3,21 @@ import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { db } from '@/db/connection'
-import { organizations } from '@/db/schema'
+import { members } from '@/db/schema'
 import { auth } from '@/http/middlewares/auth'
 
-export async function getOrganizations(app: FastifyInstance) {
+export async function getMembers(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(auth)
-    .get('/organizations', {}, async (request) => {
-      const userId = await request.getCurrentUserId()
+    .get('/members', {}, async (request) => {
+      const organizationId = await request.getCurrentOrganizationIdOfUser()
 
       const result = await db
         .select()
-        .from(organizations)
-        .where(eq(organizations.ownerId, userId))
+        .from(members)
+        .where(eq(members.organizationId, organizationId))
 
-      return { organizations: result }
+      return { members: result }
     })
 }
