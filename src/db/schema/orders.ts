@@ -1,6 +1,13 @@
 import { createId } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
-import { integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  date,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core'
 
 import { customerAddresses } from './customer-addresses'
 import { customers } from './customers'
@@ -34,6 +41,7 @@ export const orders = pgTable('orders', {
   totalAmount: integer('total_amount'),
   totalItems: integer('total_items').default(0),
   priority: priorityEnum('priority').default('NORMAL'),
+  deliveryDate: date('delivery_date'),
   createdAt: timestamp('created_at').defaultNow(),
 })
 

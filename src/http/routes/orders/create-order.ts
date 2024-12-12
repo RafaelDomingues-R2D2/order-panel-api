@@ -27,12 +27,18 @@ export async function createOrder(app: FastifyInstance) {
                 quantity: z.number(),
               }),
             ),
+            deliveryDate: z.string(),
           }),
         },
       },
       async (request, reply) => {
-        const { customerId, shippingAddressId, items, orderStageId } =
-          request.body
+        const {
+          customerId,
+          shippingAddressId,
+          items,
+          orderStageId,
+          deliveryDate,
+        } = request.body
 
         const organizationId = await request.getCurrentOrganizationIdOfUser()
 
@@ -42,8 +48,9 @@ export async function createOrder(app: FastifyInstance) {
             customerId,
             shippingAddressId,
             priority: 'NORMAL',
-            organizationId,
             orderStageId,
+            deliveryDate,
+            organizationId,
           })
           .returning()
 
