@@ -4,16 +4,9 @@ import { integer, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 import { customerAddresses } from './customer-addresses'
 import { customers } from './customers'
+import { orderStages } from './order-stages'
 import { orderItems } from './orders-items'
 import { organizations } from './organizations'
-
-export const orderStatusEnum = pgEnum('order_status', [
-  'PENDING',
-  'PAID',
-  'DONE',
-  'DELIVERED',
-  'CANCELED',
-])
 
 export const priorityEnum = pgEnum('order_PRIORITY', [
   'URGENT',
@@ -35,9 +28,11 @@ export const orders = pgTable('orders', {
   organizationId: text('organization_id')
     .references(() => organizations.id)
     .notNull(),
+  orderStageId: text('order_stage_id')
+    .references(() => orderStages.id)
+    .notNull(),
   totalAmount: integer('total_amount'),
   totalItems: integer('total_items').default(0),
-  status: orderStatusEnum('status').default('PENDING'),
   priority: priorityEnum('priority').default('NORMAL'),
   createdAt: timestamp('created_at').defaultNow(),
 })
@@ -57,6 +52,11 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
     fields: [orders.organizationId],
     references: [organizations.id],
     relationName: 'ordersOrganizations',
+  }),
+  stages: one(orderStages, {
+    fields: [orders.orderStageId],
+    references: [orderStages.id],
+    relationName: 'ordersOrderStages',
   }),
   orderItems: many(orderItems),
 }))

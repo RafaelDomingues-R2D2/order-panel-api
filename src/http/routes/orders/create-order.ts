@@ -20,6 +20,7 @@ export async function createOrder(app: FastifyInstance) {
           body: z.object({
             customerId: z.string(),
             shippingAddressId: z.string(),
+            orderStageId: z.string(),
             items: z.array(
               z.object({
                 id: z.string(),
@@ -30,7 +31,8 @@ export async function createOrder(app: FastifyInstance) {
         },
       },
       async (request, reply) => {
-        const { customerId, shippingAddressId, items } = request.body
+        const { customerId, shippingAddressId, items, orderStageId } =
+          request.body
 
         const organizationId = await request.getCurrentOrganizationIdOfUser()
 
@@ -39,9 +41,9 @@ export async function createOrder(app: FastifyInstance) {
           .values({
             customerId,
             shippingAddressId,
-            status: 'PENDING',
             priority: 'NORMAL',
             organizationId,
+            orderStageId,
           })
           .returning()
 

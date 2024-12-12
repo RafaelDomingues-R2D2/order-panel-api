@@ -1,9 +1,9 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { db } from '@/db/connection'
-import { orders } from '@/db/schema'
+import { orders, orderStages } from '@/db/schema'
 import { auth } from '@/http/middlewares/auth'
 
 export async function getOrders(app: FastifyInstance) {
@@ -13,11 +13,39 @@ export async function getOrders(app: FastifyInstance) {
     .get('/orders', {}, async (request) => {
       const organizationId = await request.getCurrentOrganizationIdOfUser()
 
-      const result = await db
-        .select()
+      const todo = await db
+        .select({ id: orders.id, totalAmount: orders.totalAmount })
         .from(orders)
-        .where(eq(orders.organizationId, organizationId))
+        .innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
+        .where(
+          and(
+            eq(orders.organizationId, organizationId),
+            eq(orderStages.name, 'TODO'),
+          ),
+        )
 
-      return { orders: result }
+      const doing = await db
+        .select({ id: orders.id, totalAmount: orders.totalAmount })
+        .from(orders)
+        .innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
+        .where(
+          and(
+            eq(orders.organizationId, organizationId),
+            eq(orderStages.name, 'DOING'),
+          ),
+        )
+
+      const done = await db
+        .select({ id: orders.id, totalAmount: orders.totalAmount })
+        .from(orders)
+        .innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
+        .where(
+          and(
+            eq(orders.organizationId, organizationId),
+            eq(orderStages.name, 'DONE'),
+          ),
+        )
+
+      return { TODO: todo, DOING: doing, DONE: done }
     })
 }

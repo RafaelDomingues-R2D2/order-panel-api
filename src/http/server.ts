@@ -19,6 +19,8 @@ import { createCustomerAddresse } from './routes/customers-addresses/create-cust
 import { getCustomerAddresses } from './routes/customers-addresses/get-customer-addresses'
 import { createMember } from './routes/members/create-member'
 import { getMembers } from './routes/members/get-members'
+import { createOrderStage } from './routes/order-stages/create-order-stage'
+import { getOrderStages } from './routes/order-stages/get-order-stages'
 import { createOrder } from './routes/orders/create-order'
 import { getOrders } from './routes/orders/get-orders'
 import { createOrganization } from './routes/organizations/create-organization'
@@ -61,6 +63,9 @@ app.register(getCustomerAddresses)
 
 app.register(createOrder)
 app.register(getOrders)
+
+app.register(createOrderStage)
+app.register(getOrderStages)
 
 const port = Number(process.env.PORT) || 3333
 const address = '0.0.0.0'
