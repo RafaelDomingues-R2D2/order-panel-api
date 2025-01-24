@@ -30,7 +30,7 @@ export async function getOrder(app: FastifyInstance) {
 				.from(orders)
 				.innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
 				.innerJoin(customers, eq(orders.customerId, customers.id))
-				.innerJoin(orderItems, eq(orders.id, orderItems.orderId))
+				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
 				.where(
 					and(eq(orders.organizationId, organizationId), eq(orders.id, id)),
 				);
