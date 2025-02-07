@@ -1,10 +1,10 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sum } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 
 import { db } from "@/db/connection";
-import { orderItems, products } from "@/db/schema";
+import { orderItems, orders, products } from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
 
 interface Params {
@@ -39,6 +39,15 @@ export async function updateOrderItem(app: FastifyInstance) {
 
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
+				const orderItemExisted = await db
+					.select({ orderId: orderItems.orderId })
+					.from(orderItems)
+					.where(
+						and(
+							eq(orderItems.organizationId, organizationId),
+							eq(orderItems.id, id),
+						),
+					);
 
 				const product = await db
 					.select()
@@ -50,7 +59,7 @@ export async function updateOrderItem(app: FastifyInstance) {
 					.set({
 						productId,
 						quantity,
-						total: Number(quantity) * Number(product[0]?.price)
+						total: Number(quantity) * Number(product[0]?.price),
 					})
 					.where(
 						and(
@@ -59,6 +68,26 @@ export async function updateOrderItem(app: FastifyInstance) {
 						),
 					)
 					.returning();
+
+				const total = await db
+					.select({ total: sum(orderItems.total) })
+					.from(orderItems)
+					.where(
+						and(
+							eq(orderItems.organizationId, organizationId),
+							eq(orderItems.orderId, orderItemExisted[0].orderId),
+						),
+					);
+
+				await db
+					.update(orders)
+					.set({ total: Number(total[0].total) })
+					.where(
+						and(
+							eq(orders.organizationId, organizationId),
+							eq(orders.id, orderItemExisted[0].orderId),
+						),
+					);
 
 				return reply.status(200).send({
 					order: orderItem,

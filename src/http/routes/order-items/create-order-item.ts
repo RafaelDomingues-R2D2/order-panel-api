@@ -1,10 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, eq, sum } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 
 import { db } from "@/db/connection";
-import { orderItems, products } from "@/db/schema";
+import { orderItems, orders, products } from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
 
 export async function createOrderItem(app: FastifyInstance) {
@@ -42,6 +42,26 @@ export async function createOrderItem(app: FastifyInstance) {
 						organizationId,
 					})
 					.returning();
+
+				const total = await db
+					.select({ total: sum(orderItems.total) })
+					.from(orderItems)
+					.where(
+						and(
+							eq(orderItems.organizationId, organizationId),
+							eq(orderItems.orderId, orderId),
+						),
+					);
+
+				await db
+					.update(orders)
+					.set({ total: Number(total[0].total) })
+					.where(
+						and(
+							eq(orders.organizationId, organizationId),
+							eq(orders.id, orderId),
+						),
+					);
 
 				return reply.status(201).send({
 					orderItem,

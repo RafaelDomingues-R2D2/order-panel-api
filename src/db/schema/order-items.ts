@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
-import { integer, pgTable, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { orders } from "./orders";
 import { organizations } from "./organizations";
@@ -21,6 +21,9 @@ export const orderItems = pgTable("order_items", {
 		.notNull(),
 	quantity: integer("quantity").default(1),
 	total: integer("price"),
+
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({

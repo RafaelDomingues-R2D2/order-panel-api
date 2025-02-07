@@ -17,7 +17,7 @@ export async function getOrders(app: FastifyInstance) {
 				.select({
 					id: orders.id,
 					deliveryDate: orders.deliveryDate,
-					totalAmount: sum(orderItems.total),
+					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
 					customerName: customers.name,
 					customerPhone: customers.phone,
@@ -39,7 +39,7 @@ export async function getOrders(app: FastifyInstance) {
 				.select({
 					id: orders.id,
 					deliveryDate: orders.deliveryDate,
-					totalAmount: sum(orderItems.total),
+					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
 					customerName: customers.name,
 					customerPhone: customers.phone,
@@ -61,7 +61,7 @@ export async function getOrders(app: FastifyInstance) {
 				.select({
 					id: orders.id,
 					deliveryDate: orders.deliveryDate,
-					totalAmount: sum(orderItems.total),
+					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
 					customerName: customers.name,
 					customerPhone: customers.phone,

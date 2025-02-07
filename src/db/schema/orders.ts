@@ -40,7 +40,10 @@ export const orders = pgTable("orders", {
 		.notNull(),
 	priority: priorityEnum("priority").default("NORMAL"),
 	deliveryDate: date("delivery_date"),
+	total: integer("price"),
+
 	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

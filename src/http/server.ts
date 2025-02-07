@@ -12,13 +12,20 @@ import { authenticateWithPassword } from "./routes/auth/authenticate-with-passwo
 import { createAccount } from "./routes/auth/create-account";
 import { getProfile } from "./routes/auth/get-profile";
 import { createCategory } from "./routes/categories/create-category";
+import { deleteCategory } from "./routes/categories/delete-category";
 import { getCategories } from "./routes/categories/get-categories";
+import { updateCategory } from "./routes/categories/update-category";
 import { createCustomerAddresse } from "./routes/customers-addresses/create-customer-address";
 import { getCustomerAddresses } from "./routes/customers-addresses/get-customer-addresses";
 import { createCustomer } from "./routes/customers/create-customer";
+import { deleteCustomer } from "./routes/customers/delete-customer";
 import { getCustomers } from "./routes/customers/get-customers";
+import { updateCustomer } from "./routes/customers/update-customer";
 import { createMember } from "./routes/members/create-member";
 import { getMembers } from "./routes/members/get-members";
+import { getDayOrdersAmount } from "./routes/metrics/get-day-orders-amount";
+import { getMonthOrdersAmount } from "./routes/metrics/get-month-orders-amount";
+import { getMonthRevenue } from "./routes/metrics/get-month-revenue";
 import { createOrderItem } from "./routes/order-items/create-order-item";
 import { deleteOrderItem } from "./routes/order-items/delete-order-item";
 import { getOrderItem } from "./routes/order-items/get-order-item";
@@ -35,7 +42,9 @@ import { updateOrder } from "./routes/orders/update-order";
 import { createOrganization } from "./routes/organizations/create-organization";
 import { getOrganizations } from "./routes/organizations/get-organizations";
 import { createProduct } from "./routes/products/create-product";
+import { deleteProduct } from "./routes/products/delete-product";
 import { getProducts } from "./routes/products/get-products";
+import { updateProduct } from "./routes/products/update-product";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -64,14 +73,20 @@ app.register(getMembers);
 // Categories
 app.register(createCategory);
 app.register(getCategories);
+app.register(updateCategory);
+app.register(deleteCategory);
 
 // Products
 app.register(createProduct);
 app.register(getProducts);
+app.register(updateProduct);
+app.register(deleteProduct);
 
 // Customers
 app.register(createCustomer);
 app.register(getCustomers);
+app.register(updateCustomer);
+app.register(deleteCustomer);
 
 // Customer Addresses
 app.register(createCustomerAddresse);
@@ -95,6 +110,11 @@ app.register(updateOrderItem);
 app.register(getOrderItems);
 app.register(getOrderItem);
 app.register(deleteOrderItem);
+
+// Metrics
+app.register(getDayOrdersAmount);
+app.register(getMonthOrdersAmount);
+app.register(getMonthRevenue);
 
 const port = Number(process.env.PORT) || 3333;
 const address = "0.0.0.0";

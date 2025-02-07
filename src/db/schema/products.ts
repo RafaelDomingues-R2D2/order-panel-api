@@ -26,7 +26,9 @@ export const products = pgTable("products", {
 	description: text("description"),
 	price: integer("price"),
 	stock: integer("stock").default(0),
+
 	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const productsRelations = relations(products, ({ one, many }) => ({
