@@ -19,6 +19,7 @@ export async function getOrders(app: FastifyInstance) {
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
+					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
 				})
@@ -32,7 +33,7 @@ export async function getOrders(app: FastifyInstance) {
 						eq(orderStages.name, "TODO"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.phone)
+				.groupBy(orders.id, customers.name, customers.id, customers.phone)
 				.orderBy(desc(orders.createdAt));
 
 			const doing = await db
@@ -41,6 +42,7 @@ export async function getOrders(app: FastifyInstance) {
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
+					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
 				})
@@ -54,7 +56,7 @@ export async function getOrders(app: FastifyInstance) {
 						eq(orderStages.name, "DOING"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.phone)
+				.groupBy(orders.id, customers.name, customers.id, customers.phone)
 				.orderBy(desc(orders.createdAt));
 
 			const done = await db
@@ -63,6 +65,7 @@ export async function getOrders(app: FastifyInstance) {
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
+					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
 				})
@@ -76,7 +79,7 @@ export async function getOrders(app: FastifyInstance) {
 						eq(orderStages.name, "DONE"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.phone)
+				.groupBy(orders.id, customers.name, customers.id, customers.phone)
 				.orderBy(desc(orders.createdAt));
 
 			return { TODO: todo, DOING: doing, DONE: done };
