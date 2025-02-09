@@ -5,15 +5,19 @@ import { z } from "zod";
 import { db } from "@/db/connection";
 import { customerAddresses } from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
+import { and, eq } from "drizzle-orm";
 
-export async function createCustomerAddresse(app: FastifyInstance) {
+export async function updateCustomerAddress(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
 		.register(auth)
-		.post(
-			"/customers-addresses",
+		.put(
+			"/customers-addresses/:id",
 			{
 				schema: {
+					params: z.object({
+						id: z.string(),
+					}),
 					body: z.object({
 						customerId: z.string(),
 						street: z.string(),
@@ -26,6 +30,8 @@ export async function createCustomerAddresse(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
+				const { id } = request.params;
+
 				const {
 					customerId,
 					street,
@@ -39,21 +45,27 @@ export async function createCustomerAddresse(app: FastifyInstance) {
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
 				const customerAddresse = await db
-					.insert(customerAddresses)
-					.values({
+					.update(customerAddresses)
+					.set({
 						customerId,
 						addressType: "SHIPPING",
-						number,
 						street,
+						number,
 						neighborhood,
 						city,
 						state,
 						postalCode,
 						organizationId,
 					})
+					.where(
+						and(
+							eq(customerAddresses.organizationId, organizationId),
+							eq(customerAddresses.id, id),
+						),
+					)
 					.returning();
 
-				return reply.status(201).send({
+				return reply.status(200).send({
 					customerAddresse,
 				});
 			},

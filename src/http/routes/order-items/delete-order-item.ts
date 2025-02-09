@@ -4,7 +4,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 
 import { db } from "@/db/connection";
-import { orderItems, orders } from "@/db/schema";
+import { orderItems, orders, products } from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
 
 interface Params {
@@ -30,8 +30,13 @@ export async function deleteOrderItem(app: FastifyInstance) {
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
 				const orderItemExisted = await db
-					.select({ orderId: orderItems.orderId })
+					.select({
+						orderId: orderItems.orderId,
+						quantity: orderItems.quantity,
+						productId: orderItems.productId,
+					})
 					.from(orderItems)
+					.innerJoin(products, eq(products.id, orderItems.productId))
 					.where(
 						and(
 							eq(orderItems.organizationId, organizationId),
@@ -65,6 +70,29 @@ export async function deleteOrderItem(app: FastifyInstance) {
 						and(
 							eq(orders.organizationId, organizationId),
 							eq(orders.id, orderItemExisted[0].orderId),
+						),
+					);
+
+				const product = await db
+					.select()
+					.from(products)
+					.where(
+						and(
+							eq(products.organizationId, organizationId),
+							eq(products.id, orderItemExisted[0].productId),
+						),
+					);
+
+				await db
+					.update(products)
+					.set({
+						stock:
+							Number(product[0].stock) + Number(orderItemExisted[0].quantity),
+					})
+					.where(
+						and(
+							eq(products.organizationId, organizationId),
+							eq(products.id, orderItemExisted[0].productId),
 						),
 					);
 

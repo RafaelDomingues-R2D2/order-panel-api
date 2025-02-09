@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 import { db } from "@/db/connection";
-import { customers } from "@/db/schema";
+import { customerAddresses, customers } from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
 
 export async function getCustomers(app: FastifyInstance) {

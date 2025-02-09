@@ -16,7 +16,10 @@ import { deleteCategory } from "./routes/categories/delete-category";
 import { getCategories } from "./routes/categories/get-categories";
 import { updateCategory } from "./routes/categories/update-category";
 import { createCustomerAddresse } from "./routes/customers-addresses/create-customer-address";
+import { deleteCustomerAddress } from "./routes/customers-addresses/delete-customer-address";
 import { getCustomerAddresses } from "./routes/customers-addresses/get-customer-addresses";
+import { getCustomerAddressesByCustomer } from "./routes/customers-addresses/get-customer-addresses-by-customer";
+import { updateCustomerAddress } from "./routes/customers-addresses/update-customer-address";
 import { createCustomer } from "./routes/customers/create-customer";
 import { deleteCustomer } from "./routes/customers/delete-customer";
 import { getCustomers } from "./routes/customers/get-customers";
@@ -91,6 +94,9 @@ app.register(deleteCustomer);
 // Customer Addresses
 app.register(createCustomerAddresse);
 app.register(getCustomerAddresses);
+app.register(getCustomerAddressesByCustomer);
+app.register(updateCustomerAddress);
+app.register(deleteCustomerAddress);
 
 // Orders
 app.register(createOrder);

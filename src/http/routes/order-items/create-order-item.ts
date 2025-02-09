@@ -30,9 +30,14 @@ export async function createOrderItem(app: FastifyInstance) {
 				const product = await db
 					.select()
 					.from(products)
-					.where(eq(products.id, productId));
+					.where(
+						and(
+							eq(products.organizationId, organizationId),
+							eq(products.id, productId),
+						),
+					);
 
-				const orderItem = await db
+				const orderItemCreate = await db
 					.insert(orderItems)
 					.values({
 						orderId,
@@ -43,7 +48,7 @@ export async function createOrderItem(app: FastifyInstance) {
 					})
 					.returning();
 
-				const total = await db
+				const orderItem = await db
 					.select({ total: sum(orderItems.total) })
 					.from(orderItems)
 					.where(
@@ -55,7 +60,7 @@ export async function createOrderItem(app: FastifyInstance) {
 
 				await db
 					.update(orders)
-					.set({ total: Number(total[0].total) })
+					.set({ total: Number(orderItem[0].total) })
 					.where(
 						and(
 							eq(orders.organizationId, organizationId),
@@ -63,8 +68,18 @@ export async function createOrderItem(app: FastifyInstance) {
 						),
 					);
 
+				await db
+					.update(products)
+					.set({ stock: Number(product[0].stock) - Number(quantity) })
+					.where(
+						and(
+							eq(products.organizationId, organizationId),
+							eq(products.id, productId),
+						),
+					);
+
 				return reply.status(201).send({
-					orderItem,
+					orderItem: orderItemCreate,
 				});
 			},
 		);

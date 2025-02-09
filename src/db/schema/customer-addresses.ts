@@ -19,6 +19,7 @@ export const customerAddresses = pgTable("customer_addresses", {
 		.notNull(),
 	addressType: addressTypeEnum("address_type"),
 	street: text("street"),
+	number: text("number"),
 	neighborhood: varchar("neighborhood", { length: 100 }),
 	city: varchar("city", { length: 100 }),
 	state: varchar("state", { length: 100 }),

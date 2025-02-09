@@ -14,7 +14,7 @@ export async function getOrder(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
 		.register(auth)
-		.get<{ Params: Params }>("/orders/:id", async (request, params) => {
+		.get<{ Params: Params }>("/orders/:id", async (request) => {
 			const organizationId = await request.getCurrentOrganizationIdOfUser();
 
 			const { id } = request.params;
