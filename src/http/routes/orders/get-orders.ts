@@ -3,7 +3,13 @@ import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 
 import { db } from "@/db/connection";
-import { customers, orderItems, orderStages, orders } from "@/db/schema";
+import {
+	customerAddresses,
+	customers,
+	orderItems,
+	orderStages,
+	orders,
+} from "@/db/schema";
 import { auth } from "@/http/middlewares/auth";
 
 export async function getOrders(app: FastifyInstance) {
@@ -22,18 +28,35 @@ export async function getOrders(app: FastifyInstance) {
 					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
+					customerStreet: customerAddresses.street,
+					customerNumber: customerAddresses.number,
+					customerNeighborhood: customerAddresses.neighborhood,
+					customerCity: customerAddresses.city,
 				})
 				.from(orders)
 				.innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
 				.innerJoin(customers, eq(orders.customerId, customers.id))
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
+				.innerJoin(
+					customerAddresses,
+					eq(customerAddresses.customerId, customers.id),
+				)
 				.where(
 					and(
 						eq(orders.organizationId, organizationId),
 						eq(orderStages.name, "TODO"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.id, customers.phone)
+				.groupBy(
+					orders.id,
+					customers.name,
+					customers.id,
+					customers.phone,
+					customerAddresses.street,
+					customerAddresses.number,
+					customerAddresses.neighborhood,
+					customerAddresses.city,
+				)
 				.orderBy(desc(orders.createdAt));
 
 			const doing = await db
@@ -45,18 +68,36 @@ export async function getOrders(app: FastifyInstance) {
 					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
+					customerStreet: customerAddresses.street,
+					customerNumber: customerAddresses.number,
+					customerNeighborhood: customerAddresses.neighborhood,
+					customerCity: customerAddresses.city,
 				})
 				.from(orders)
 				.innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
 				.innerJoin(customers, eq(orders.customerId, customers.id))
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
+				.innerJoin(
+					customerAddresses,
+					eq(customerAddresses.customerId, customers.id),
+				)
 				.where(
 					and(
 						eq(orders.organizationId, organizationId),
 						eq(orderStages.name, "DOING"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.id, customers.phone)
+				.groupBy(
+					orders.id,
+					customers.name,
+					customers.id,
+					customers.phone,
+					customerAddresses.street,
+					customerAddresses.number,
+					customerAddresses.neighborhood,
+					customerAddresses.city,
+				)
+
 				.orderBy(desc(orders.createdAt));
 
 			const done = await db
@@ -68,18 +109,36 @@ export async function getOrders(app: FastifyInstance) {
 					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
+					customerStreet: customerAddresses.street,
+					customerNumber: customerAddresses.number,
+					customerNeighborhood: customerAddresses.neighborhood,
+					customerCity: customerAddresses.city,
 				})
 				.from(orders)
 				.innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))
 				.innerJoin(customers, eq(orders.customerId, customers.id))
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
+				.innerJoin(
+					customerAddresses,
+					eq(customerAddresses.customerId, customers.id),
+				)
 				.where(
 					and(
 						eq(orders.organizationId, organizationId),
 						eq(orderStages.name, "DONE"),
 					),
 				)
-				.groupBy(orders.id, customers.name, customers.id, customers.phone)
+				.groupBy(
+					orders.id,
+					customers.name,
+					customers.id,
+					customers.phone,
+					customerAddresses.street,
+					customerAddresses.number,
+					customerAddresses.neighborhood,
+					customerAddresses.city,
+				)
+
 				.orderBy(desc(orders.createdAt));
 
 			return { TODO: todo, DOING: doing, DONE: done };
