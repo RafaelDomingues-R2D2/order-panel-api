@@ -13,6 +13,7 @@ interface Params {
 interface Body {
 	customerId: string;
 	deliveryDate: string;
+	pickupeByCustomer: boolean;
 }
 
 export async function updateOrder(app: FastifyInstance) {
@@ -29,13 +30,14 @@ export async function updateOrder(app: FastifyInstance) {
 					body: z.object({
 						customerId: z.string().optional(),
 						deliveryDate: z.string().optional(),
+						pickupeByCustomer: z.boolean(),
 					}),
 				},
 			},
 			async (request, reply) => {
 				const { id } = request.params;
 
-				const { customerId, deliveryDate } = request.body;
+				const { customerId, deliveryDate, pickupeByCustomer } = request.body;
 
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
@@ -44,6 +46,7 @@ export async function updateOrder(app: FastifyInstance) {
 					.set({
 						customerId,
 						deliveryDate,
+						pickupeByCustomer,
 					})
 					.where(
 						and(eq(orders.organizationId, organizationId), eq(orders.id, id)),

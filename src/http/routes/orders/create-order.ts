@@ -18,11 +18,12 @@ export async function createOrder(app: FastifyInstance) {
 					body: z.object({
 						customerId: z.string(),
 						deliveryDate: z.string(),
+						pickupeByCustomer: z.boolean(),
 					}),
 				},
 			},
 			async (request, reply) => {
-				const { customerId, deliveryDate } = request.body;
+				const { customerId, deliveryDate, pickupeByCustomer } = request.body;
 
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
@@ -36,7 +37,15 @@ export async function createOrder(app: FastifyInstance) {
 						),
 					);
 
-				const customerAddress = await db.select().from(customerAddresses);
+				const customerAddress = await db
+					.select()
+					.from(customerAddresses)
+					.where(
+						and(
+							eq(customerAddresses.organizationId, organizationId),
+							eq(customerAddresses.customerId, customerId),
+						),
+					);
 
 				const order = await db
 					.insert(orders)
@@ -46,6 +55,7 @@ export async function createOrder(app: FastifyInstance) {
 						priority: "NORMAL",
 						orderStageId: orderStage[0].id,
 						deliveryDate,
+						pickupeByCustomer,
 						organizationId,
 					})
 					.returning();

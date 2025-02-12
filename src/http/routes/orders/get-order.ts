@@ -26,6 +26,7 @@ export async function getOrder(app: FastifyInstance) {
 					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
+					pickupeByCustomer: orders.pickupeByCustomer,
 				})
 				.from(orders)
 				.innerJoin(orderStages, eq(orders.orderStageId, orderStages.id))

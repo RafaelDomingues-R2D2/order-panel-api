@@ -1,6 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
+	boolean,
 	date,
 	integer,
 	pgEnum,
@@ -41,6 +42,7 @@ export const orders = pgTable("orders", {
 	priority: priorityEnum("priority").default("NORMAL"),
 	deliveryDate: date("delivery_date"),
 	total: integer("price"),
+	pickupeByCustomer: boolean("pickupe_by_customer").default(false),
 
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at").defaultNow(),

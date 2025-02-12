@@ -1,0 +1,1 @@
+ALTER TABLE "orders" ADD COLUMN "pickupe_by_customer" boolean;

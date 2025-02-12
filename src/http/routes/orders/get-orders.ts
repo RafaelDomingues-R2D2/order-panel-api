@@ -24,6 +24,7 @@ export async function getOrders(app: FastifyInstance) {
 					id: orders.id,
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
+					pickupeByCustomer: orders.pickupeByCustomer,
 					totalItems: sum(orderItems.quantity),
 					customerId: customers.id,
 					customerName: customers.name,
@@ -39,7 +40,7 @@ export async function getOrders(app: FastifyInstance) {
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
 				.innerJoin(
 					customerAddresses,
-					eq(customerAddresses.customerId, customers.id),
+					eq(customerAddresses.id, orders.shippingAddressId),
 				)
 				.where(
 					and(
@@ -52,10 +53,7 @@ export async function getOrders(app: FastifyInstance) {
 					customers.name,
 					customers.id,
 					customers.phone,
-					customerAddresses.street,
-					customerAddresses.number,
-					customerAddresses.neighborhood,
-					customerAddresses.city,
+					customerAddresses.id,
 				)
 				.orderBy(desc(orders.createdAt));
 
@@ -65,6 +63,7 @@ export async function getOrders(app: FastifyInstance) {
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
 					totalItems: sum(orderItems.quantity),
+					pickupeByCustomer: orders.pickupeByCustomer,
 					customerId: customers.id,
 					customerName: customers.name,
 					customerPhone: customers.phone,
@@ -79,7 +78,7 @@ export async function getOrders(app: FastifyInstance) {
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
 				.innerJoin(
 					customerAddresses,
-					eq(customerAddresses.customerId, customers.id),
+					eq(customerAddresses.id, orders.shippingAddressId),
 				)
 				.where(
 					and(
@@ -92,10 +91,7 @@ export async function getOrders(app: FastifyInstance) {
 					customers.name,
 					customers.id,
 					customers.phone,
-					customerAddresses.street,
-					customerAddresses.number,
-					customerAddresses.neighborhood,
-					customerAddresses.city,
+					customerAddresses.id,
 				)
 
 				.orderBy(desc(orders.createdAt));
@@ -105,6 +101,7 @@ export async function getOrders(app: FastifyInstance) {
 					id: orders.id,
 					deliveryDate: orders.deliveryDate,
 					totalAmount: orders.total,
+					pickupeByCustomer: orders.pickupeByCustomer,
 					totalItems: sum(orderItems.quantity),
 					customerId: customers.id,
 					customerName: customers.name,
@@ -120,7 +117,7 @@ export async function getOrders(app: FastifyInstance) {
 				.leftJoin(orderItems, eq(orders.id, orderItems.orderId))
 				.innerJoin(
 					customerAddresses,
-					eq(customerAddresses.customerId, customers.id),
+					eq(customerAddresses.id, orders.shippingAddressId),
 				)
 				.where(
 					and(
@@ -133,10 +130,7 @@ export async function getOrders(app: FastifyInstance) {
 					customers.name,
 					customers.id,
 					customers.phone,
-					customerAddresses.street,
-					customerAddresses.number,
-					customerAddresses.neighborhood,
-					customerAddresses.city,
+					customerAddresses.id,
 				)
 
 				.orderBy(desc(orders.createdAt));
