@@ -22,14 +22,13 @@ export async function updateProduct(app: FastifyInstance) {
 						name: z.string(),
 						description: z.string().optional(),
 						price: z.number(),
-						stock: z.number(),
 						categoryId: z.string(),
 					}),
 				},
 			},
 			async (request, reply) => {
 				const { id } = request.params;
-				const { name, description, price, stock, categoryId } = request.body;
+				const { name, description, price, categoryId } = request.body;
 
 				const organizationId = await request.getCurrentOrganizationIdOfUser();
 
@@ -39,7 +38,6 @@ export async function updateProduct(app: FastifyInstance) {
 						name,
 						description,
 						price,
-						stock,
 						categoryId,
 					})
 					.where(
