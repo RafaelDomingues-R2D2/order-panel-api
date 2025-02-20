@@ -37,6 +37,12 @@ export async function createOrderItem(app: FastifyInstance) {
 						),
 					);
 
+				if (Number(quantity) > Number(product[0]?.stock)) {
+					throw new Error(
+						`Estoque insuficiente. Estoque: ${product[0]?.stock}`,
+					);
+				}
+
 				const orderItemCreate = await db
 					.insert(orderItems)
 					.values({
